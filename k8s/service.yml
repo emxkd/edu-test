@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${PROJECT_NAME}
+  labels:
+    service: ${PROJECT_NAME}
+  annotations:
+    getambassador.io/config: |
+      ---
+      apiVersion: ambassador/v1
+      kind: Mapping
+      name: ${PROJECT_NAME}-docs-home
+      prefix: /auth/docs
+      rewrite: ""
+      service: http://${PROJECT_NAME}
+      ---
+      apiVersion: ambassador/v1
+      kind: Mapping
+      name: ${PROJECT_NAME}-mapping
+      prefix: /auth/
+      service: ${PROJECT_NAME}
+      connect_timeout_ms: 10000
+spec:
+  selector:
+    app: ${PROJECT_NAME}
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
